@@ -2,18 +2,23 @@ import React from 'react'
 
 function TodoItem({name, completed, actionCompleted, actionArchive}) {  
   return (
-    <div>
-      <input
-        type="checkbox"
-        checked={completed ? 'checked' : ''}
-        onChange={actionCompleted}
-        /> { name } 
-      <input
-        type="button"
-        value="X"
-        onClick={actionArchive}
-        />
-    </div>
+    <li class="list-group-item">
+      <div className="d-flex justify-content-between">
+        <div>
+          <input
+            type="checkbox"
+            className="form-check-input me-1"
+            checked={completed ? 'checked' : ''}
+            onChange={actionCompleted}
+            /> {name} 
+        </div>
+        <input
+          type="button"
+          className="btn btn-close"
+          onClick={actionArchive}
+          />
+      </div>
+    </li>
   )
 }
 

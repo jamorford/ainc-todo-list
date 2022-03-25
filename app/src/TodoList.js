@@ -24,12 +24,14 @@ function TodoList() {
     return storageTodoIdNext
   })
 
+  // Object containing all desired task filters, in the format of "property": "value"
   let [filters, setFilters] = React.useState(() => {
     let initialFilters = Object.create(null)
     initialFilters.archived = false
     return initialFilters
   })
 
+  // Value inside the "Add a Todo" input textbox
   let [newTodoInput, setNewTodoInput] = React.useState('')
 
   // --- LOCAL STORAGE PERSISTANCE --- //
@@ -53,7 +55,7 @@ function TodoList() {
     newTodo.completed = false
     newTodo.archived = false
 
-    let newTodos = [newTodo, ...todos]
+    let newTodos = [ ...todos, newTodo]
     setTodos(newTodos)
     setTodoIdNext(todoIdNext + 1)
   }
@@ -93,6 +95,7 @@ function TodoList() {
   }
 
   // --- COMPLETED ACTIONS --- //
+  // Set the completed flag on all non-archived tasks
   function setTodoCompletedAll(status) {
     let newTodos = [...todos]
     newTodos.forEach((todo, index) => {
@@ -103,7 +106,7 @@ function TodoList() {
     setTodos(newTodos)
   }
 
-  // --- COMPLETED ACTIONS --- //
+  // Set the archived flag on all completed, non-archived tasks
   function setTodoArchivedCompleted() {
     let newTodos = [...todos]
     newTodos.forEach((todo, index) => {
@@ -115,8 +118,8 @@ function TodoList() {
   }
 
 
-  // Filter the todos and store results as a local variable
-  // This should be re-calculated on each re-render
+  // Filter the todos based on filter state and store results as a local variable
+  // This will be re-calculated on each re-render
   let todosFiltered = todos
     .map((item, index) => {
       let todoItem = Object.create(null)
@@ -133,21 +136,36 @@ function TodoList() {
       return includeItem
     })
 
+  // Additionally create a filtered list of completed items
+  // Currently used only for the "items remaining" counter
   let todosFilteredCompleted = todosFiltered.filter(item => item.data.completed === false)
-
   
   return (
-    <div>
-      <input type="button" value="All" onClick={setFilterAll}/>
-      <input type="button" value="Not Completed" onClick={setFilterNotCompleted}/>
-      <input type="button" value="Completed" onClick={setFilterCompleted}/>
-      <input type="button" value="Complete All" onClick={() => setTodoCompletedAll(true)}/>
-      <input type="button" value="Un-complete All" onClick={() => setTodoCompletedAll(false)}/>
-      <input type="button" value="Clear Completed" onClick={setTodoArchivedCompleted}/>
-      <br/>
+    <>
+      <div className="btn-group mb-3" role="group" aria-label="Filters">
+        <input
+            type="button"
+            value="All"
+            className="btn btn-outline-primary"
+            onClick={setFilterAll}
+            />
+        <input
+            type="button"
+            value="Not Completed"
+            className="btn btn-outline-primary"
+            onClick={setFilterNotCompleted}
+            />
+        <input
+            type="button"
+            value="Completed"
+            className="btn btn-outline-primary"
+            onClick={setFilterCompleted}
+            />
+      </div>
       <input
         type="text"
-        placeholder="Add Todo"
+        placeholder="Add a Todo"
+        className="form-control mb-3"
         value={newTodoInput}
         onChange={e => setNewTodoInput(e.target.value)}
         onKeyUp={e => {
@@ -158,21 +176,43 @@ function TodoList() {
         }}
         />
       <div>
-        {todosFiltered.length === 0 && filters.completed === undefined && <p>Congrats! You've reached inbox zero</p>}
+        {todosFiltered.length === 0 && filters.completed === undefined && <p>Congrats! &#127881; You've reached inbox zero</p>}
         {todosFiltered.length === 0 && filters.completed === true && <p>There are no complete tasks</p>}
         {todosFiltered.length === 0 && filters.completed === false && <p>There are no incomplete tasks</p>}
-        {todosFiltered.map(item => 
-          <TodoItem
-            key={item.data.id}
-            name={item.data.name}
-            completed={item.data.completed}
-            actionCompleted={() => setTodoCompleted(item.index)}
-            actionArchive={() => setTodoArchived(item.index)}
-            />
-        )}
+        <ul class="list-group mb-3">
+          {todosFiltered.map(item => 
+            <TodoItem
+              key={item.data.id}
+              name={item.data.name}
+              completed={item.data.completed}
+              actionCompleted={() => setTodoCompleted(item.index)}
+              actionArchive={() => setTodoArchived(item.index)}
+              />
+          )}
+        </ul>
       </div>
-      <p>{todosFilteredCompleted.length} item(s) remaining</p>
-    </div>
+      <p className="me-2">{todosFilteredCompleted.length} item(s) remaining</p>
+      <div className="btn-group mb-3" role="group" aria-label="Actions">
+        <input
+          type="button"
+          value="Complete All"
+          className="btn btn-outline-danger"
+          onClick={() => setTodoCompletedAll(true)}
+          />
+        <input
+          type="button"
+          value="Un-complete All"
+          className="btn btn-outline-danger"
+          onClick={() => setTodoCompletedAll(false)}
+          />
+        <input
+          type="button"
+          value="Clear Completed"
+          className="btn btn-outline-danger"
+          onClick={() => setTodoArchivedCompleted()}
+          />
+      </div>
+    </>
   )
 }
 

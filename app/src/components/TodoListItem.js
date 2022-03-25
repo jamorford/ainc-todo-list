@@ -2,7 +2,7 @@ import React from 'react'
 
 function TodoItem({name, completed, actionCompleted, actionArchive}) {  
   return (
-    <li class="list-group-item">
+    <li className="list-group-item">
       <div className="d-flex justify-content-between">
         <div>
           <input

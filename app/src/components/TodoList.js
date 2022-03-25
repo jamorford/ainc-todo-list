@@ -1,6 +1,8 @@
 import React from 'react'
-import TodoItem from './TodoItem.js'
+import TodoListItem from './TodoListItem.js'
 import TodoListFilters from './TodoListFilters.js'
+import TodoListInput from './TodoListInput.js'
+import TodoListActions from './TodoListActions.js'
 
 function TodoList() {
   // Setup todo state and populate with local storage value on start
@@ -31,9 +33,6 @@ function TodoList() {
     initialFilters.archived = false
     return initialFilters
   })
-
-  // Value inside the "Add a Todo" input textbox
-  let [newTodoInput, setNewTodoInput] = React.useState('')
 
   // --- LOCAL STORAGE PERSISTANCE --- //
   // Save the updated todo list to local storage, then update the React state
@@ -73,30 +72,6 @@ function TodoList() {
     setTodos(newTodos)
   }
 
-  // --- COMPLETED ACTIONS --- //
-  // Set the completed flag on all non-archived tasks
-  function setTodoCompletedAll(status) {
-    let newTodos = [...todos]
-    newTodos.forEach((todo, index) => {
-      if (!todo.archived) {
-        newTodos[index].completed = status
-      }
-    })
-    setTodos(newTodos)
-  }
-
-  // Set the archived flag on all completed, non-archived tasks
-  function setTodoArchivedCompleted() {
-    let newTodos = [...todos]
-    newTodos.forEach((todo, index) => {
-      if (!todo.archived && todo.completed) {
-        newTodos[index].archived = true
-      }
-    })
-    setTodos(newTodos)
-  }
-
-
   // Filter the todos based on filter state and store results as a local variable
   // This will be re-calculated on each re-render
   let todosFiltered = todos
@@ -121,27 +96,18 @@ function TodoList() {
   
   return (
     <>
-      <TodoListFilters filters={filters} setFilters={setFilters}/>
-      <input
-        type="text"
-        placeholder="Add a Todo"
-        className="form-control mb-3"
-        value={newTodoInput}
-        onChange={e => setNewTodoInput(e.target.value)}
-        onKeyUp={e => {
-          if (e.key === 'Enter') {
-            addTodo(e.target.value)
-            setNewTodoInput('')
-          }
-        }}
+      <TodoListFilters
+        filters={filters}
+        setFilters={setFilters}
         />
+      <TodoListInput addTodo={addTodo}/>
       <div>
         {todosFiltered.length === 0 && filters.completed === undefined && <p>Congrats! &#127881; You've reached inbox zero</p>}
         {todosFiltered.length === 0 && filters.completed === true && <p>There are no complete tasks</p>}
         {todosFiltered.length === 0 && filters.completed === false && <p>There are no incomplete tasks</p>}
-        <ul class="list-group mb-3">
+        <ul className="list-group mb-3">
           {todosFiltered.map(item => 
-            <TodoItem
+            <TodoListItem
               key={item.data.id}
               name={item.data.name}
               completed={item.data.completed}
@@ -152,26 +118,10 @@ function TodoList() {
         </ul>
       </div>
       <p className="me-2">{todosFilteredCompleted.length} item(s) remaining</p>
-      <div className="btn-group mb-3" role="group" aria-label="Actions">
-        <input
-          type="button"
-          value="Complete All"
-          className="btn btn-outline-danger"
-          onClick={() => setTodoCompletedAll(true)}
-          />
-        <input
-          type="button"
-          value="Un-complete All"
-          className="btn btn-outline-danger"
-          onClick={() => setTodoCompletedAll(false)}
-          />
-        <input
-          type="button"
-          value="Clear Completed"
-          className="btn btn-outline-danger"
-          onClick={() => setTodoArchivedCompleted()}
-          />
-      </div>
+      <TodoListActions
+        todos={todos}
+        setTodos={setTodos}
+        />
     </>
   )
 }

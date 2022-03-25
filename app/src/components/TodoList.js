@@ -1,5 +1,6 @@
 import React from 'react'
 import TodoItem from './TodoItem.js'
+import TodoListFilters from './TodoListFilters.js'
 
 function TodoList() {
   // Setup todo state and populate with local storage value on start
@@ -72,28 +73,6 @@ function TodoList() {
     setTodos(newTodos)
   }
 
-  // --- FILTERS --- //
-  function setFilterAll() {
-    let newFilters = Object.create(null)
-    Object.assign(newFilters, filters)
-    delete newFilters.completed
-    setFilters(newFilters)
-  }
-
-  function setFilterNotCompleted() {
-    let newFilters = Object.create(null)
-    Object.assign(newFilters, filters)
-    newFilters.completed = false
-    setFilters(newFilters)
-  }
-
-  function setFilterCompleted() {
-    let newFilters = Object.create(null)
-    Object.assign(newFilters, filters)
-    newFilters.completed = true
-    setFilters(newFilters)
-  }
-
   // --- COMPLETED ACTIONS --- //
   // Set the completed flag on all non-archived tasks
   function setTodoCompletedAll(status) {
@@ -142,26 +121,7 @@ function TodoList() {
   
   return (
     <>
-      <div className="btn-group mb-3" role="group" aria-label="Filters">
-        <input
-            type="button"
-            value="All"
-            className="btn btn-outline-primary"
-            onClick={setFilterAll}
-            />
-        <input
-            type="button"
-            value="Not Completed"
-            className="btn btn-outline-primary"
-            onClick={setFilterNotCompleted}
-            />
-        <input
-            type="button"
-            value="Completed"
-            className="btn btn-outline-primary"
-            onClick={setFilterCompleted}
-            />
-      </div>
+      <TodoListFilters filters={filters} setFilters={setFilters}/>
       <input
         type="text"
         placeholder="Add a Todo"

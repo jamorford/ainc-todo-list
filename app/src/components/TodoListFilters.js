@@ -2,8 +2,7 @@ function TodoListFilters({filters, setFilters}) {
 
   // --- FILTERS --- //
   function setFilter(type) {
-    let newFilters = Object.create(null)
-    Object.assign(newFilters, filters)
+    let newFilters = {...filters};
 
     switch(type){
       case 'all':
@@ -19,7 +18,7 @@ function TodoListFilters({filters, setFilters}) {
         break;
     }
     
-    setFilters(newFilters)
+    setFilters(newFilters);
   }
 
   return (
@@ -43,7 +42,7 @@ function TodoListFilters({filters, setFilters}) {
           onClick={() => setFilter('completed')}
           />
     </div>
-  )
+  );
 }
 
-export default TodoListFilters
+export default TodoListFilters;

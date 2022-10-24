@@ -1,24 +1,22 @@
 function TodoListActions({todos, setTodos}) {
   // Set the completed flag on all non-archived tasks
   function setTodoCompletedAll(status) {
-    let newTodos = [...todos]
-    newTodos.forEach((todo, index) => {
+    setTodos(todos.map(todo => {
       if (!todo.archived) {
-        newTodos[index].completed = status
+        todo.completed = status;
       }
-    })
-    setTodos(newTodos)
+      return todo;
+    }));
   }
 
   // Set the archived flag on all completed, non-archived tasks
   function setTodoArchivedCompleted() {
-    let newTodos = [...todos]
-    newTodos.forEach((todo, index) => {
+    setTodos(todos.map(todo => {
       if (!todo.archived && todo.completed) {
-        newTodos[index].archived = true
+        todo.archived = true;
       }
-    })
-    setTodos(newTodos)
+      return todo;
+    }));
   }
 
   return (
@@ -45,4 +43,4 @@ function TodoListActions({todos, setTodos}) {
   )
 }
 
-export default TodoListActions
+export default TodoListActions;

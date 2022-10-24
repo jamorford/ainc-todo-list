@@ -1,85 +1,74 @@
-import React from 'react'
-import TodoListItem from './TodoListItem.js'
-import TodoListFilters from './TodoListFilters.js'
-import TodoListInput from './TodoListInput.js'
-import TodoListActions from './TodoListActions.js'
+import React from 'react';
+import TodoListItem from './TodoListItem.js';
+import TodoListFilters from './TodoListFilters.js';
+import TodoListInput from './TodoListInput.js';
+import TodoListActions from './TodoListActions.js';
 
 function TodoList() {
   // Setup todo state and populate with local storage value on start
   let [todos, setTodosState] = React.useState(() => {
-    let storageTodos = window.localStorage.getItem('todos')
-    if (storageTodos === null) {
-      storageTodos = []
-    } else {
-      storageTodos = JSON.parse(storageTodos)
-    }
-    return storageTodos
-  })
+    let storageTodos = window.localStorage.getItem('todos');
+    storageTodos === null ? storageTodos = [] : storageTodos = JSON.parse(storageTodos);
+    return storageTodos;
+  });
 
   // Setup todo ID state and populate with local storage value on start
   let [todoIdNext, setTodoIdNextState] = React.useState(() => {
-    let storageTodoIdNext = window.localStorage.getItem('todoIdNext')
-    if (storageTodoIdNext === null) {
-      storageTodoIdNext = 0
-    } else {
-      storageTodoIdNext = parseInt(storageTodoIdNext)
-    }
-    return storageTodoIdNext
-  })
+    let storageTodoIdNext = window.localStorage.getItem('todoIdNext');
+    storageTodoIdNext === null ? storageTodoIdNext = 0 : storageTodoIdNext = parseInt(storageTodoIdNext);
+    return storageTodoIdNext;
+  });
 
   // Object containing all desired task filters, in the format of "property": "value"
-  let [filters, setFilters] = React.useState(() => {
-    let initialFilters = Object.create(null)
-    initialFilters.archived = false
-    return initialFilters
-  })
+  let [filters, setFilters] = React.useState({
+    archived: false
+  });
 
   // --- LOCAL STORAGE PERSISTANCE --- //
   // Save the updated todo list to local storage, then update the React state
   function setTodos(newTodos) {
-    window.localStorage.setItem('todos', JSON.stringify(newTodos))
-    setTodosState(newTodos)
+    window.localStorage.setItem('todos', JSON.stringify(newTodos));
+    setTodosState(newTodos);
   }
 
   // Save the updated todo ID to local storage, then update the React state
   function setTodoIdNext(id) {
-    window.localStorage.setItem('todoIdNext', id)
-    setTodoIdNextState(id)
+    window.localStorage.setItem('todoIdNext', id);
+    setTodoIdNextState(id);
   }
 
   // --- TODO CRUD OPERATIONS --- //
   function addTodo(name) {
-    let newTodo = Object.create(null)
-    newTodo.id = todoIdNext
-    newTodo.name = name
-    newTodo.completed = false
-    newTodo.archived = false
-
-    let newTodos = [ ...todos, newTodo]
-    setTodos(newTodos)
-    setTodoIdNext(todoIdNext + 1)
+    let newTodos = [...todos, {
+      id: todoIdNext,
+      name: name,
+      completed: false,
+      archived: false
+    }];
+    setTodos(newTodos);
+    setTodoIdNext(todoIdNext + 1);
   }
 
   function setTodoArchived(index) {
-    let newTodos = [...todos]
-    newTodos[index].archived = true
-    setTodos(newTodos)
+    let newTodos = [...todos];
+    newTodos[index].archived = true;
+    setTodos(newTodos);
   }
 
   function setTodoCompleted(index) {
-    let newTodos = [...todos]
-    newTodos[index].completed = newTodos[index].completed ? false : true
-    setTodos(newTodos)
+    let newTodos = [...todos];
+    newTodos[index].completed = !newTodos[index].completed;
+    setTodos(newTodos);
   }
 
   // Filter the todos based on filter state and store results as a local variable
   // This will be re-calculated on each re-render
   let todosFiltered = todos
     .map((item, index) => {
-      let todoItem = Object.create(null)
-      todoItem.index = index
-      todoItem.data = item
-      return todoItem
+      return {
+        index: index,
+        data: item
+      }
     })
     .filter(item => {
       let includeItem = true
@@ -88,11 +77,11 @@ function TodoList() {
         if (item.data[filter[0]] !== filter[1]) includeItem = false
       })
       return includeItem
-    })
+    });
 
   // Additionally create a filtered list of completed items
   // Currently used only for the "items remaining" counter
-  let todosFilteredCompleted = todosFiltered.filter(item => item.data.completed === false)
+  let todosFilteredCompleted = todosFiltered.filter(item => item.data.completed === false);
   
   return (
     <>
@@ -123,7 +112,7 @@ function TodoList() {
         setTodos={setTodos}
         />
     </>
-  )
+  );
 }
 
-export default TodoList
+export default TodoList;

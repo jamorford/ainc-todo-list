@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 function TodoItem({name, completed, actionCompleted, actionArchive}) {  
   return (
@@ -19,7 +19,7 @@ function TodoItem({name, completed, actionCompleted, actionArchive}) {
           />
       </div>
     </li>
-  )
+  );
 }
 
-export default TodoItem
+export default TodoItem;
